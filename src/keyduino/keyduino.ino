@@ -1,11 +1,11 @@
 // Rows
-int ROWS[] = {PD3, PD2, PD1, PD0, PD4, PC6, PD7, PE6, PB4, PB5, PB6};
+int ROWS[] = {2, 3, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
 // Columns
-int EN = PF7;
-int CLK = PB3;
-int DATA = PB1;
-int LATCH = PB2;
+int EN = A0;
+int CLK = 14;
+int DATA = 15;
+int LATCH = 16;
 
 int Row = 0;
 byte Led = 0;
@@ -14,9 +14,6 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
   Serial.print("Keyduino v0.1\r\n");
-  
-  // put your setup code here, to run once:
-  pinMode(PD5, OUTPUT);
 
   for (int i = 0; i<11; i++) {
     pinMode(ROWS[i], OUTPUT);
@@ -53,19 +50,17 @@ unsigned int readKeyboard() {
   digitalWrite(LATCH, HIGH);
 
   //Serial shift
-  digitalWrite(EN, HIGH);
+  digitalWrite(EN, LOW);
   delay(1);
-  
-  tmp = sendClockPulse();
-  tmp = sendClockPulse();
 
   for (byte i=0; i<16; i++) {
     tmp = sendClockPulse();
     if (tmp == 1) {
       ret |= 0x0001;
     }
-    ret = ret << 1;
+    if (i < 15) {ret = ret << 1;}
   }
+  digitalWrite(EN, HIGH);
   return ret;
 }
 
