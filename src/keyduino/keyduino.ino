@@ -1,88 +1,34 @@
-// Rows
-int ROWS[] = {2, 3, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+#include "MCP23S17.h"
 
-// Columns
-int EN = A0;
-int CLK = 14;
-int DATA = 15;
-int LATCH = 16;
+const int chipSelectPin = 10;
+MCP23S17 IO(chipSelectPin);
 
-int Row = 0;
-byte Led = 0;
+//           76543210765432107654321076543210
+unsigned long ROWS = 0x000001FF; //B00000000000000000000000111111111L;
+unsigned long COLS = 0x0FFFFE00; //B00000000111111111111111000000000L;
+
+unsigned long pinAddress[] = {
+  0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010, 0x00000020, 0x00000040, 0x00000080,
+  0x00000100, 0x00000200, 0x00000400, 0x00000800, 0x00001000, 0x00002000, 0x00004000, 0x00008000,
+  0x00010000, 0x00020000, 0x00040000, 0x00080000, 0x00100000, 0x00200000, 0x00400000, 0x00800000,
+  0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000, 0x20000000, 0x40000000, 0x80000000,
+};
 
 void setup() {
   Serial.begin(115200);
   delay(1000);
   Serial.print("Keyduino v0.1\r\n");
 
-  for (int i = 0; i<11; i++) {
-    pinMode(ROWS[i], OUTPUT);
-  }
-
-  pinMode(EN, OUTPUT);
-  pinMode(LATCH, OUTPUT);
-  pinMode(CLK, OUTPUT);
-  pinMode(DATA, INPUT);
-
-  digitalWrite(EN, HIGH);
-  digitalWrite(LATCH, HIGH);
-  digitalWrite(CLK, HIGH);
-}
-
-byte sendClockPulse() {
-  digitalWrite(CLK, LOW);
-  delay(1);
-  byte ret = digitalRead(DATA);
-  digitalWrite(CLK, HIGH);
-  delay(1);
-  return ret;
-}
-
-unsigned int readKeyboard() {
-  unsigned int ret = 0;
-  byte tmp = 0;
-
-  //Parallel load
-  digitalWrite(EN, HIGH);
-  delay(1);
-  digitalWrite(LATCH, LOW);
-  delay(1);
-  digitalWrite(LATCH, HIGH);
-
-  //Serial shift
-  digitalWrite(EN, LOW);
-  delay(1);
-
-  for (byte i=0; i<16; i++) {
-    tmp = sendClockPulse();
-    if (tmp == 1) {
-      ret |= 0x0001;
-    }
-    if (i < 15) {ret = ret << 1;}
-  }
-  digitalWrite(EN, HIGH);
-  return ret;
+  IO.begin();
+  delay(100);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  digitalWrite(ROWS[Row], HIGH);
-  delay(25);
-  unsigned int key = readKeyboard();
+//  IO.pinMode(0xFF7FFFFF);
+//  IO.pinWrite(0x00800000);
+  delay(1);
+  unsigned long key = IO.pinRead();  
   Serial.print(key, HEX);
   Serial.print("\r\n");
-  digitalWrite(ROWS[Row], LOW);
-  delay(25);
-
-  if (Row++ >= 11) {
-    Serial.print("Row zero...\r\n");
-    Row = 0;
-  }
-//  int LED = Led++ & 0x80;
-//  if (LED > 0) {
-//    digitalWrite(PD5, HIGH);
-//  } else {
-//    digitalWrite(PD5, LOW);
-//  }
-//  delay(25);
 }
