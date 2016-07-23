@@ -1,16 +1,18 @@
 #include "MCP23S17.h"
 
-MCP23S17::MCP23S17(uint8_t ce) {
+MCP23S17::MCP23S17(uint8_t ce1, uint8_t ce2) {
 	_address = OPCODE;
-	_ce = ce;
+  _ce1 = ce1;
+	_ce2 = ce2;
  SPISettings _speedSPI(100000, MSBFIRST, SPI_MODE0);
 };
 
-MCP23S17::MCP23S17(uint8_t address, uint8_t ce) {
+MCP23S17::MCP23S17(uint8_t address, uint8_t ce1, uint8_t ce2) {
   //make even address and shift one bit
   //bit 1 is for R/W
   _address = OPCODE | ((address & 0x07) << 1); 
-  _ce = ce;
+  _ce1 = ce1;
+  _ce2 = ce2;
   SPISettings _speedSPI(100000, MSBFIRST, SPI_MODE0);
 };
 
@@ -19,8 +21,10 @@ void MCP23S17::speedSPI(uint32_t speed) {
 };
 
 void MCP23S17::begin() {
-	::pinMode(_ce, OUTPUT);
-	::digitalWrite(_ce, HIGH);
+	::pinMode(_ce1, OUTPUT);
+  ::pinMode(_ce2, OUTPUT);
+	::digitalWrite(_ce1, HIGH);
+  ::digitalWrite(_ce2, HIGH);
   SPI.begin();
 
   writeRegister(_address, IOCON, 0x08);
@@ -31,11 +35,13 @@ void MCP23S17::begin() {
 
 void MCP23S17::writeRegister(uint8_t address, uint8_t reg, uint8_t val) {
   SPI.beginTransaction(_speedSPI);
-  ::digitalWrite(_ce, LOW);
+  ::digitalWrite(_ce1, LOW);
+  ::digitalWrite(_ce2, LOW);
   SPI.transfer(address & 0xFE);
   SPI.transfer(reg);
   SPI.transfer(val);
-  ::digitalWrite(_ce, HIGH);
+  ::digitalWrite(_ce1, HIGH);
+  ::digitalWrite(_ce2, HIGH);
   SPI.endTransaction();
   //delay??
 //  SPI.transfer(0x00);
@@ -44,11 +50,13 @@ void MCP23S17::writeRegister(uint8_t address, uint8_t reg, uint8_t val) {
 uint8_t MCP23S17::readRegister(uint8_t address, uint8_t reg) {
   uint8_t val = 0;
   SPI.beginTransaction(_speedSPI);
-  ::digitalWrite(_ce, LOW);
+  ::digitalWrite(_ce1, LOW);
+  ::digitalWrite(_ce2, LOW);
   SPI.transfer(address | 0x01);
   SPI.transfer(reg);
   val = SPI.transfer(0x00);
-  ::digitalWrite(_ce, HIGH);
+  ::digitalWrite(_ce1, HIGH);
+  ::digitalWrite(_ce2, HIGH);
   SPI.endTransaction();
   return val;
 };

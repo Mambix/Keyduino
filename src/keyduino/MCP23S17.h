@@ -36,8 +36,8 @@
 
 class MCP23S17 {
 	public:
-    MCP23S17(uint8_t, uint8_t);
-		MCP23S17(uint8_t);
+    MCP23S17(uint8_t, uint8_t, uint8_t);
+		MCP23S17(uint8_t, uint8_t);
 		void begin();
     void pinMode(uint32_t);
     void pinPullUP(uint32_t);
@@ -46,7 +46,7 @@ class MCP23S17 {
     uint32_t pinRead(void);
 	private:
 		uint8_t _address;
-		uint8_t _ce;
+		uint8_t _ce1, _ce2;
     uint8_t _BA0, _BA1, _BB0, _BB1;
     SPISettings _speedSPI;
     void writeRegister(uint8_t, uint8_t, uint8_t);
