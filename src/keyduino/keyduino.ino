@@ -43,6 +43,7 @@ void setup() {
   delay(100);
 }
 
+/* MAP KEYBOARD */
 void loop() {
   // put your main code here, to run repeatedly:
   unsigned int pos = pinPOS & 0x1F;
@@ -54,7 +55,7 @@ void loop() {
 //    key = IO.pinRead();
     key ^= IO.pinRead();
 //    key &= pinAddress[pos];
-    if (/*(key>0) &&*/ (key!=oldKey[pos])) {
+    if (key!=oldKey[pos]) {
       Serial.print(pos | 0x8000, HEX);
       Serial.print(": ");
       Serial.print(key | 0x80000000, HEX);
@@ -64,3 +65,27 @@ void loop() {
   }
   pinPOS++;
 }
+/**/
+
+/* EMULATE KEYBOARD *
+void loop() {
+  // put your main code here, to run repeatedly:
+  unsigned int pos = pinPOS & 0x1F;
+  if ((pinAddress[pos] & ROWS) > 0) {
+    unsigned long key = 0xFFFFFFFF ^ pinAddress[pos];
+    IO.pinMode(key);
+    IO.pinWrite(key);
+    delay(1);
+//    key = IO.pinRead();
+    key ^= IO.pinRead();
+//    key &= pinAddress[pos];
+    if (key!=oldKey[pos]) {
+      Serial.print(pos | 0x8000, HEX);
+      Serial.print(": ");
+      Serial.print(key | 0x80000000, HEX);
+      Serial.print("\r\n");
+      oldKey[pos]=key;
+    }
+  }
+  pinPOS++;
+}/**/
