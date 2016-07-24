@@ -22,10 +22,10 @@ if __name__ == '__main__':
 		while cnt<100:
 			ln1 = ser.readline()
 			ln2 = ser.readline()
-			ln3 = ser.readline()
-			ln4 = ser.readline()
+			# ln3 = ser.readline()
+			# ln4 = ser.readline()
 			
-			keys['KEY_%s' % cnt] = [ln1, ln2, ln3, ln4]
+			keys['KEY_%s' % cnt] = [ln1, ln2] # , ln3, ln4]
 			
 			cnt = cnt + 1
 	except Exception as msg:

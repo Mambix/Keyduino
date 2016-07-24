@@ -1,8 +1,8 @@
 #ifndef keyboard_h
 #define keyboard_h
 
-#define KEYBOARD_ROWS (0x000001FF)
-#define KEYBOARD_COLS (0x0FFFFE00)
+#define KEYBOARD_COLS (0x03FC0000)
+#define KEYBOARD_ROWS (0x0003FFFF)
 
 #include <Arduino.h>
 

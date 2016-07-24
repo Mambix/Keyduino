@@ -3,17 +3,16 @@
 #include "MCP23S17.h"
 #include "PK1306R1A08.h"
 
+#ifndef keyboard_h
+#error No keyboard definition included!!!
+#endif
+
 const int chipSelectPin1 = 2;
 const int chipSelectPin2 = 3;
 const int chipReset = 10;
 MCP23S17 IO(chipSelectPin1, chipSelectPin2);
 //laptopKeyboard KEY();
 
-//           76543210765432107654321076543210
-unsigned long ROWS = 0x0FFFFFFF;
-unsigned long COLS = 0x0FFFFFFF;
-//unsigned long ROWS = KEYBOARD_ROWS;
-//unsigned long COLS = KEYBOARD_COLS;
 byte pinPOS = 0;
 unsigned long key=0;
 
@@ -47,7 +46,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   unsigned int pos = pinPOS & 0x1F;
-  if ((pinAddress[pos] & ROWS) > 0) {
+  if ((pinAddress[pos] & KEYBOARD_COLS) > 0) {
     unsigned long key = 0xFFFFFFFF ^ pinAddress[pos];
     IO.pinMode(key);
     IO.pinWrite(key);
