@@ -2,7 +2,7 @@
 # Filename: mapKeyboard.py
 
 '''
-Created on 23 Jul 2016
+Created on 24 Jul 2016
 
 @author: ledi.mambix@gmail.com
 '''
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 			# ln3 = ser.readline()
 			# ln4 = ser.readline()
 			
-			keys['KEY_%s' % cnt] = [ln1, ln2] # , ln3, ln4]
+			keys['KEY_%0.2X' % cnt] = [ln1, ln2] # , ln3, ln4]
 			
 			cnt = cnt + 1
 	except Exception as msg:
@@ -33,5 +33,7 @@ if __name__ == '__main__':
 
 	if ser.is_open == True:
 		ser.close()
-	print(json.dumps(keys, indent=2))
+
+	with open('%s_decoded.json' % 'PK1306R1A08', 'w') as f:
+		f.write(json.dumps(keys, indent=2, sort_keys=True))
 	

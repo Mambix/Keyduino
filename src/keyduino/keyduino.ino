@@ -3,15 +3,11 @@
 #include "MCP23S17.h"
 #include "PK1306R1A08.h"
 
-#ifndef keyboard_h
-#error No keyboard definition included!!!
-#endif
-
 const int chipSelectPin1 = 2;
 const int chipSelectPin2 = 3;
 const int chipReset = 10;
 MCP23S17 IO(chipSelectPin1, chipSelectPin2);
-//laptopKeyboard KEY();
+laptopKeyboard KEY;
 
 byte pinPOS = 0;
 unsigned long key=0;
@@ -25,9 +21,13 @@ unsigned long pinAddress[] = {
 };
 
 void setup() {
+#ifdef keyboard_h
+  Keyboard.begin();
+#else
   Serial.begin(115200);
   delay(1000);
   Serial.print("Keyduino v0.1\r\n");
+#endif
 
   ::pinMode(chipReset, OUTPUT);
   ::digitalWrite(chipReset, HIGH);
@@ -42,7 +42,7 @@ void setup() {
   delay(100);
 }
 
-/* MAP KEYBOARD */
+/* MAP KEYBOARD *
 void loop() {
   // put your main code here, to run repeatedly:
   unsigned int pos = pinPOS & 0x1F;
@@ -66,23 +66,25 @@ void loop() {
 }
 /**/
 
-/* EMULATE KEYBOARD *
+/* EMULATE KEYBOARD */
 void loop() {
   // put your main code here, to run repeatedly:
   unsigned int pos = pinPOS & 0x1F;
-  if ((pinAddress[pos] & ROWS) > 0) {
+  if ((pinAddress[pos] & KEYBOARD_COLS) > 0) {
     unsigned long key = 0xFFFFFFFF ^ pinAddress[pos];
     IO.pinMode(key);
     IO.pinWrite(key);
     delay(1);
-//    key = IO.pinRead();
     key ^= IO.pinRead();
-//    key &= pinAddress[pos];
     if (key!=oldKey[pos]) {
-      Serial.print(pos | 0x8000, HEX);
-      Serial.print(": ");
-      Serial.print(key | 0x80000000, HEX);
-      Serial.print("\r\n");
+      unsigned long diff = key ^ oldKey[pos];
+      for (int i = 0; i<32; i++) {
+        if (pinAddress[i] & diff) {
+          uint8_t bPress = 0;
+          if (key & pinAddress[i]) {bPress = 1;}
+          KEY.processKey(pos, pinAddress[i], bPress);
+        }
+      }
       oldKey[pos]=key;
     }
   }
