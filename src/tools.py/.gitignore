@@ -2,4 +2,4 @@
 *.json
 *.h
 *.pyc
-.idea
+/.idea/
