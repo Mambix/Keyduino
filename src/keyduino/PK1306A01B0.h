@@ -1,5 +1,5 @@
-#ifndef PK1306R1A08_h
-#define PK1306R1A08_h
+#ifndef PK1306A01B0_h
+#define PK1306A01B0_h
 
 #ifndef keyboard_h
 #define keyboard_h
@@ -13,13 +13,11 @@
 #include <Arduino.h>
 #include <Keyboard.h>
 
-class keyboardPK1306R1A08 {
+class keyboardPK1306A01B0 {
 	public:
-    keyboardPK1306R1A08();
+    keyboardPK1306A01B0();
     void sendKey(char, uint8_t);
     void processKey(uint16_t, uint32_t, uint8_t);
 //	private:
 };
-#else
-#error Include only one Keyboard file in the project!!!
 #endif

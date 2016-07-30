@@ -1,13 +1,24 @@
 // Hardware v0.2
 
 #include "MCP23S17.h"
-#include "PK1306R1A08.h"
+//#include "PK1306R1A08.h"
+#include "PK1306A01B0.h"
 
 const int chipSelectPin1 = 2;
 const int chipSelectPin2 = 3;
 const int chipReset = 10;
 MCP23S17 IO(chipSelectPin1, chipSelectPin2);
-laptopKeyboard KEY;
+#ifdef keyboard_h
+  #ifdef PK1306R1A08_h 
+    keyboardPK1306R1A08 KEY; 
+  #endif
+  #ifdef PK1306A01B0_h
+    keyboardPK1306A01B0 KEY;
+  #endif
+#else
+  #define KEYBOARD_COLS (0x03FC0000)
+  #define KEYBOARD_ROWS (0xFFFFFFFF)
+#endif
 
 byte pinPOS = 0;
 unsigned long key=0;
@@ -42,33 +53,9 @@ void setup() {
   delay(100);
 }
 
-/* MAP KEYBOARD *
-void loop() {
-  // put your main code here, to run repeatedly:
-  unsigned int pos = pinPOS & 0x1F;
-  if ((pinAddress[pos] & KEYBOARD_COLS) > 0) {
-    unsigned long key = 0xFFFFFFFF ^ pinAddress[pos];
-    IO.pinMode(key);
-    IO.pinWrite(key);
-    delay(1);
-//    key = IO.pinRead();
-    key ^= IO.pinRead();
-//    key &= pinAddress[pos];
-    if (key!=oldKey[pos]) {
-      Serial.print(pos | 0x8000, HEX);
-      Serial.print(": ");
-      Serial.print(key | 0x80000000, HEX);
-      Serial.print("\r\n");
-      oldKey[pos]=key;
-    }
-  }
-  pinPOS++;
-}
-/**/
-
+#ifdef keyboard_h
 /* EMULATE KEYBOARD */
 void loop() {
-  // put your main code here, to run repeatedly:
   unsigned int pos = pinPOS & 0x1F;
   if ((pinAddress[pos] & KEYBOARD_COLS) > 0) {
     unsigned long key = 0xFFFFFFFF ^ pinAddress[pos];
@@ -89,4 +76,25 @@ void loop() {
     }
   }
   pinPOS++;
-}/**/
+}
+#else
+/* MAP KEYBOARD */
+void loop() {
+  unsigned int pos = pinPOS & 0x1F;
+  if ((pinAddress[pos] & KEYBOARD_COLS) > 0) {
+    unsigned long key = 0xFFFFFFFF ^ pinAddress[pos];
+    IO.pinMode(key);
+    IO.pinWrite(key);
+    delay(1);
+    key ^= IO.pinRead();
+    if (key!=oldKey[pos]) {
+      Serial.print(pos | 0x8000, HEX);
+      Serial.print(": ");
+      Serial.print(key | 0x80000000, HEX);
+      Serial.print("\r\n");
+      oldKey[pos]=key;
+    }
+  }
+  pinPOS++;
+}
+#endif

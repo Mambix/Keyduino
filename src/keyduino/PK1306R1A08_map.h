@@ -20,10 +20,10 @@
 #define KEY_0E ('?')
 #define KEY_0F (KEY_INSERT)
 #define KEY_10 (KEY_DELETE)
-#define KEY_11 ('?')
+#define KEY_11 ('?') //NumLk???
 #define KEY_12 ('/')
 #define KEY_13 ('*')
-#define KEY_14 ('?')
+#define KEY_14 ('`')
 #define KEY_15 ('1')
 #define KEY_16 ('2')
 #define KEY_17 ('3')

@@ -7,16 +7,25 @@ Created on 24 Jul 2016
 @author: ledi.mambix@gmail.com
 '''
 
+import sys
 import json
 import collections
 
 if __name__ == '__main__':
     keyboardMatrix = {}
-    with open('%s_decoded.json' % 'PK1306R1A08', 'r') as f:
+
+    if len(sys.argv) < 2:
+        print('Not enough argumets!!!')
+        print('python countLines.py name ')
+        print('python countLines.py PK1306A01B0')
+        quit()
+    name = sys.argv[1]
+
+    with open('%s_decoded.json' % name, 'r') as f:
         jsonData = json.load(f)
         orderedData = collections.OrderedDict(sorted(jsonData.items()))
 
-        with open('%s_map.h' % 'PK1306R1A08', 'w') as f:
+        with open('%s_map.h' % name, 'w') as f:
             f.write('// Map keyboard keys into arduino characters\n// https://www.arduino.cc/en/Reference/KeyboardModifiers\n\n#include <Keyboard.h>\n\n')
             for key in orderedData:
                 f.write('#define %s (\'?\')\n' % key)
@@ -29,12 +38,12 @@ if __name__ == '__main__':
             row = '0x0%s' % values[1][2:-2]
             keyboardMatrix[column][row] = key
 
-        with open('%s_matrix.json' % 'PK1306R1A08', 'w') as f:
+        with open('%s_matrix.json' % name, 'w') as f:
             f.write(json.dumps(keyboardMatrix, indent=2, sort_keys=True))
 
-        with open('%s.cpp' % 'PK1306R1A08', 'w') as f:
-            f.write('#include "%s.h"\n' % 'PK1306R1A08')
-            f.write('#include "%s_map.h"\n' % 'PK1306R1A08')
+        with open('%s.cpp' % name, 'w') as f:
+            f.write('#include "%s.h"\n' % name)
+            f.write('#include "%s_map.h"\n' % name)
             f.write('\n')
             f.write('laptopKeyboard::laptopKeyboard() {\n')
             f.write('};\n')

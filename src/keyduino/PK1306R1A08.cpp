@@ -1,10 +1,10 @@
 #include "PK1306R1A08.h"
 #include "PK1306R1A08_map.h"
 
-laptopKeyboard::laptopKeyboard() {
+keyboardPK1306R1A08::keyboardPK1306R1A08() {
 };
 
-void laptopKeyboard::sendKey(char key, uint8_t bPress) {
+void keyboardPK1306R1A08::sendKey(char key, uint8_t bPress) {
   if (bPress == 1) {
     Keyboard.press(key);
   } else {
@@ -12,7 +12,7 @@ void laptopKeyboard::sendKey(char key, uint8_t bPress) {
   }
 };
 
-void laptopKeyboard::processKey(uint16_t col, uint32_t row, uint8_t bPress) {
+void keyboardPK1306R1A08::processKey(uint16_t col, uint32_t row, uint8_t bPress) {
   switch (col) {
     case 0x19:
       if (row == 0x00000002) {sendKey(KEY_15, bPress);}
@@ -132,4 +132,3 @@ void laptopKeyboard::processKey(uint16_t col, uint32_t row, uint8_t bPress) {
       break;
   }
 };
-

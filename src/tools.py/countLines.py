@@ -7,11 +7,19 @@ Created on 24 Jul 2016
 @author: ledi.mambix@gmail.com
 '''
 
+import sys
 import json
 
 if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print('Not enough argumets!!!')
+        print('python countLines.py name ')
+        print('python countLines.py PK1306A01B0')
+        quit()
+    name = sys.argv[1]
+
     cnt = {'count': {}, 'wire': {}}
-    with open('PK1306R1A08.json', 'r') as f:
+    with open('%s.json' % name, 'r') as f:
         jsonData = json.load(f)
 
         for key in jsonData:
@@ -39,4 +47,5 @@ if __name__ == '__main__':
                 cnt['count'][row1] = 1
             else:
                 cnt['count'][row1] = cnt['count'][row1] + 1
-        print(json.dumps(cnt, indent=2))
+        with open('%s_count.json' % name, 'w') as f:
+            f.write(json.dumps(cnt, indent=2, sort_keys=True))
